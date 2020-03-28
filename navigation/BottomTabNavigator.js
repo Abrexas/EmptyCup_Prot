@@ -12,7 +12,8 @@ const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Login';
 
 export default function BottomTabNavigator({ navigation, route }) {
-	navigation.setOptions({ headerTitle: getHeaderTitle(route) });
+	//navigation.setOptions({ headerTitle:  getHeaderTitle(route) });
+	navigation.setOptions({ hideHeader: true });
 
 	return (
 		<BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
