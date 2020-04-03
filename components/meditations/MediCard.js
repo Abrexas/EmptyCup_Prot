@@ -10,7 +10,7 @@ import {
 const MediCard = (props) => {
 	return (
 		<View style={{paddingVertical: 6}}>
-			<TouchableWithoutFeedback onPress={() => alert(props.title)}>
+			<TouchableWithoutFeedback onPress={() => props.navigation.navigate({name: 'Player'})}>
 				<View style={styles.container}>
 					<Text>{props.title}</Text>
 				</View>

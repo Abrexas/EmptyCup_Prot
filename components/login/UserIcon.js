@@ -3,11 +3,11 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function UserIcon(props) {
 	return (
-		<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Home'})}>
-			<View style={styles.iconContainer}>
-				<View style={styles.innerIconContainer}></View>
-			</View>
-		</TouchableOpacity>
+		//<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Medi'})}>
+		<View style={styles.iconContainer}>
+			<View style={styles.innerIconContainer}></View>
+		</View>
+		//</TouchableOpacity>
 	);
 }
 

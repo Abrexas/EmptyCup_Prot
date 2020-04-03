@@ -10,7 +10,8 @@ export default function(containerRef) {
 				screens: {
 					Login: 'login',
 					Register: 'register',
-					Home: 'home',
+					Medi: 'medi',
+					Player: 'player',
 					Links: 'links',
 					Settings: 'settings',
 				},

@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 // Sign In Button
 export default function SignIn(props) {
 	return (
-			<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Home'})}>
+			<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Medi'})}>
 				<View style={styles.touchContainer}>
 					<Text style={{color: "#64f"}}>Sign In</Text>
 				</View>

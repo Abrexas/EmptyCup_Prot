@@ -10,10 +10,21 @@ import {
 } from 'react-native';
 
 // Import Custom Components
-import { MonoText } from '../components/StyledText';
 import MediCard from '../components/meditations/MediCard';
 
-export default function HomeScreen() {
+export default function MediScreen(props) {
+
+	// Dynamically build MediCard from Array
+	let arr = [
+		<MediCard navigation={props.navigation} title="The Blue Tent"/>,
+		<MediCard navigation={props.navigation} title="The Sacred Breath"/>,
+		<MediCard navigation={props.navigation} title="Leaf In The Wind"/>,
+		<MediCard navigation={props.navigation} title="The Stone Circle"/>,
+		<MediCard navigation={props.navigation} title="The Waterfall"/>,
+		<MediCard navigation={props.navigation} title="The Carving Stone"/>,
+		<MediCard navigation={props.navigation} title="The Great Ravine"/>
+	];
+
 	return (
 		<View style={{flex:1}}>
 			<View style={styles.header}>
@@ -21,23 +32,14 @@ export default function HomeScreen() {
 			</View>
 			<View style={styles.container}>
 				<ScrollView>
-					<MonoText>Home Screen</MonoText>
-					<MediCard title="The Blue Tent"/>
-					<MediCard title="The Sacred Breath"/>
-					<MediCard title="Leaf In The Wind"/>
-					<MediCard title="The Stone Circle"/>
-					<MediCard title="The Waterfall"/>
-					<MediCard title="Carving Stone"/>
-					<MediCard title="The Great Ravine"/>
+					{arr}
+					{/*
+					*/}
 				</ScrollView>
 			</View>
 		</View>
 	);
 }
-
-HomeScreen.navigationOptions = {
-	header: null,
-};
 
 const styles = StyleSheet.create({
 	header: {

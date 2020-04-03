@@ -36,7 +36,7 @@ export default function RegisterScreen(props) {
 				<Text style={styles.formText}>Confirm Password</Text>
 				<TextInput secureTextEntry={true} style={styles.formInput} placeholder="(required)"/>
 			</View>
-			<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Home'})}>
+			<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Medi'})}>
 				<View style={{width: 250, height: 48, backgroundColor: '#fff', borderRadius: 10, alignItems: 'center', justifyContent: 'center'}}>
 					<Text style={{color: '#8af'}}>REGISTER</Text>
 				</View>

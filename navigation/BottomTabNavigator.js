@@ -5,7 +5,8 @@ import TabBarIcon from '../components/TabBarIcon';
 // Imoprt Screens
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import HomeScreen  from '../screens/HomeScreen';
+import MediScreen  from '../screens/MediScreen';
+import PlayerScreen from '../screens/PlayerScreen';
 import LinksScreen from '../screens/LinksScreen';
 
 const BottomTab = createBottomTabNavigator();
@@ -13,7 +14,18 @@ const INITIAL_ROUTE_NAME = 'Login';
 
 export default function BottomTabNavigator({ navigation, route }) {
 	//navigation.setOptions({ headerTitle:  getHeaderTitle(route) });
-	navigation.setOptions({ hideHeader: true });
+	navigation.setOptions({ 
+		headerShown: (route.state?.routes[route.state.index]?.name  == "Player") ? true : false ,
+		headerTitle: getHeaderTitle(route),
+		headerStyle: {
+			height: 120,
+		},
+		headerTitleStyle: {
+			alignSelf: 'center',
+			fontSize: 48
+		},
+		headerTitleAlign: 'center',
+	});
 
 	return (
 		<BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
@@ -23,6 +35,7 @@ export default function BottomTabNavigator({ navigation, route }) {
 				options={{
 					title: 'Login Screen',
 					tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
+					tabBarVisible: false
 				}}
 			/>
 			<BottomTab.Screen
@@ -31,14 +44,26 @@ export default function BottomTabNavigator({ navigation, route }) {
 				options={{
 					title: 'Register Screen',
 					tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code" />,
+					tabBarVisible: false
 				}}
 			/>
 			<BottomTab.Screen
-				name="Home"
-				component={HomeScreen}
+				name="Medi"
+				component={MediScreen}
 				options={{
-					title: 'Home Screen',
+					title: 'Medi Screen',
 					tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
+					tabBarVisible: false
+				}}
+			/>
+			<BottomTab.Screen
+				name="Player"
+				component={PlayerScreen}
+				options={{
+					title: 'Player Screen',
+					tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
+					tabBarVisible: false,
+					headerShown: true,
 				}}
 			/>
 			<BottomTab.Screen
@@ -47,6 +72,7 @@ export default function BottomTabNavigator({ navigation, route }) {
 				options={{
 					title: 'Links Screen',
 					tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
+					tabBarVisible: false,
 				}}
 			/>
 		</BottomTab.Navigator>
@@ -58,12 +84,14 @@ function getHeaderTitle(route) {
 
 	switch (routeName) {
 		case 'Login':
-			return 'Log In User';
-		case 'Home':
-			return 'How to get started';
+			return 'Login User';
+		case 'Medi':
+			return 'Select a Meditation';
 		case 'Links':
 			return 'Links to learn more';
 		case 'Register':
 			return 'Register New User';
+		case 'Player':
+			return 'Medi Name';
 	}
 }
