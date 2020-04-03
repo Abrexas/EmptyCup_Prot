@@ -32,6 +32,7 @@ export default class Media_PlayPause extends Component {
 		try {
 			(async() => {
 				await this.state.soundObject.loadAsync(require('../assets/sounds/Menu.mp3'));
+				await this.state.soundObject.setProgressUpdateIntervalAsync(1000);
 			})();
 		} catch (err) {
 			console.error(err);
@@ -116,6 +117,14 @@ export default class Media_PlayPause extends Component {
 					</TouchableOpacity>
 					*/}
 				</View>
+				<View style={styles.sliderContainer}>
+					<Slider 
+						minimumTrackTintColor='#c4a'
+						value={this.state.time_current}
+						onSlidingComplete={(val) => this.state.soundObject.playFromPositionAsync(val)}
+						maximumValue={this.state.time_duration}
+					/>
+				</View>
 				<View style={styles.timelineContainer}>
 					<Text style={styles.timelineText}>Current: {this._toTime(this.state.time_current)}</Text>
 					<Button 
@@ -152,6 +161,9 @@ const styles = StyleSheet.create({
 		backgroundColor: '#888',
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	sliderContainer: {
+		width: '80%',
 	},
 	timelineContainer: {
 		flexDirection: 'row',
