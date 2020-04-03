@@ -33,6 +33,15 @@ export default class Media_PlayPause extends Component {
 			(async() => {
 				await this.state.soundObject.loadAsync(require('../assets/sounds/Menu.mp3'));
 				await this.state.soundObject.setProgressUpdateIntervalAsync(1000);
+				await Audio.setAudioModeAsync({
+					staysActiveInBackground: true,
+					interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+					shouldDuckAndroid: true,
+					playThroughEarpieceAndroid: true,
+					allowsRecordingIOS: true,
+					interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+					playsInSilentModeIOS: true,
+				});
 			})();
 		} catch (err) {
 			console.error(err);
@@ -127,12 +136,6 @@ export default class Media_PlayPause extends Component {
 				</View>
 				<View style={styles.timelineContainer}>
 					<Text style={styles.timelineText}>Current: {this._toTime(this.state.time_current)}</Text>
-					<Button 
-						title="Check"
-						onPress={() => console.log(
-							this.state.soundObject.positionMillis
-						)}
-					/>
 					<Text style={styles.timelineText}>Length: {this._toTime(this.state.time_duration)} </Text>
 				</View>
 			</View>

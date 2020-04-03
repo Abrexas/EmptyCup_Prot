@@ -16,13 +16,13 @@ export default function MediScreen(props) {
 
 	// Dynamically build MediCard from Array
 	let arr = [
-		<MediCard navigation={props.navigation} title="The Blue Tent"/>,
-		<MediCard navigation={props.navigation} title="The Sacred Breath"/>,
-		<MediCard navigation={props.navigation} title="Leaf In The Wind"/>,
-		<MediCard navigation={props.navigation} title="The Stone Circle"/>,
-		<MediCard navigation={props.navigation} title="The Waterfall"/>,
-		<MediCard navigation={props.navigation} title="The Carving Stone"/>,
-		<MediCard navigation={props.navigation} title="The Great Ravine"/>
+		<MediCard key={1} navigation={props.navigation} title="The Blue Tent"/>,
+		<MediCard key={2} navigation={props.navigation} title="The Sacred Breath"/>,
+		<MediCard key={3} navigation={props.navigation} title="Leaf In The Wind"/>,
+		<MediCard key={4} navigation={props.navigation} title="The Stone Circle"/>,
+		<MediCard key={5} navigation={props.navigation} title="The Waterfall"/>,
+		<MediCard key={6} navigation={props.navigation} title="The Carving Stone"/>,
+		<MediCard key={7} navigation={props.navigation} title="The Great Ravine"/>
 	];
 
 	return (
