@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import { 
 	StyleSheet, 
 	Text, 
-	View, 
+	View,
+	ScrollView,
 	TouchableOpacity, 
 	Slider,
-	Button 
+	Dimensions
 } from 'react-native';
 import { Audio } from 'expo-av';
 
 // Import Custom Components
 import AlbumCard from '../components/player/AlbumCard';
+import GoDeeper  from '../components/player/GoDeeper';
 
 export default class Media_PlayPause extends Component {
 
@@ -51,17 +53,25 @@ export default class Media_PlayPause extends Component {
 		this.state.soundObject.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
 	}
 
+	componentWillUnmount(){
+		if (this.state.isPlaying){
+			this._kill_Audio();
+		}
+		console.log("Cutting Audio...")
+		console.log('unmount')
+	}
+
 	// Confirm soundObject is Loaded
 	_onPlaybackStatusUpdate = playbackStatus => {
 		if (playbackStatus.isLoaded && !this.state.isLoaded) {
 			this.setState(() => ({ isLoaded: true }))
 			this.setState(() => ({ time_duration: playbackStatus.durationMillis }))
 		}
-		
+
 		if (playbackStatus.isPlaying) {
 			this.setState(() => ({ time_current: playbackStatus.positionMillis }))
 		}
-		
+
 	}
 
 	_toTime(s) {
@@ -74,7 +84,7 @@ export default class Media_PlayPause extends Component {
 
 		if (hrs > 0)
 			return hrs + ':' + mins + ':' + secs;
-		
+
 		return mins + ':' + secs;
 	}
 
@@ -100,56 +110,79 @@ export default class Media_PlayPause extends Component {
 		this.state.soundObject.playFromPositionAsync(this.state.time_current + dir*10000);
 	}
 
+	_onSlidingComplete(val){
+		if (this.state.isPlaying){
+			this.state.soundObject.playFromPositionAsync(val);
+		}
+		else{
+			this.state.soundObject.setPositionAsync(val);
+		}
+	}
+
 	// Temporary Killswitch
 	_kill_Audio() { this.state.soundObject.stopAsync(); }
 
 	render() {		
 		return (
 			<View style={styles.container}>
-				<AlbumCard />
-				<View style={styles.mediaContainer}>
-					<TouchableOpacity style={styles.buttonContainer} onPress={ () => this._skip(-1) }>
-						<Text> -10 </Text>
-					</TouchableOpacity>
+				<ScrollView contentContainerStyle={{flexGrow: 1}} style={{backgroundColor: '#00f'}}>
+					<View style={styles.scrollContainer}>
+						<AlbumCard />
+						<View style={styles.mediaContainer}>
+							<TouchableOpacity style={styles.buttonContainer} onPress={ () => this._skip(-1) }>
+								<Text> -10 </Text>
+							</TouchableOpacity>
 
-					<TouchableOpacity style={styles.buttonContainer} onPress={ () => this._toggle_PlayPause() }>
-						<Text>{this.state.mediaText}</Text>
-					</TouchableOpacity>
+							<TouchableOpacity style={styles.buttonContainer} onPress={ () => this._toggle_PlayPause() }>
+								<Text>{this.state.mediaText}</Text>
+							</TouchableOpacity>
 
-					<TouchableOpacity style={styles.buttonContainer} onPress={ () => this._skip(1) }>
-						<Text> +10 </Text>
-					</TouchableOpacity>
+							<TouchableOpacity style={styles.buttonContainer} onPress={ () => this._skip(1) }>
+								<Text> +10 </Text>
+							</TouchableOpacity>
 
-					{/*
+							{/*
 					<TouchableOpacity style={styles.buttonContainer} onPress={ () => this._kill_Audio() }>
 						<Text>Stop</Text>
-					</TouchableOpacity>
-					*/}
+						</TouchableOpacity>
+						*/}
+					</View>
+					<View style={styles.sliderContainer}>
+						<Slider 
+							minimumTrackTintColor='#c4a'
+							value={this.state.time_current}
+							onSlidingComplete={(val) => this._onSlidingComplete(val)} 
+							maximumValue={this.state.time_duration}
+						/>
+					</View>
+					<View style={styles.timelineContainer}>
+						<Text style={styles.timelineText}>Current: {this._toTime(this.state.time_current)}</Text>
+						<Text style={styles.timelineText}>Length: {this._toTime(this.state.time_duration)} </Text>
+					</View>
+					<GoDeeper/>
 				</View>
-				<View style={styles.sliderContainer}>
-					<Slider 
-						minimumTrackTintColor='#c4a'
-						value={this.state.time_current}
-						onSlidingComplete={(val) => this.state.soundObject.playFromPositionAsync(val)}
-						maximumValue={this.state.time_duration}
-					/>
-				</View>
-				<View style={styles.timelineContainer}>
-					<Text style={styles.timelineText}>Current: {this._toTime(this.state.time_current)}</Text>
-					<Text style={styles.timelineText}>Length: {this._toTime(this.state.time_duration)} </Text>
-				</View>
-			</View>
-
+			</ScrollView>
+		</View>
 		);
 	}
 }
 
+let _height = Dimensions.get('window').height
+
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		height: '100%',
 		backgroundColor: '#3c3838',
+		borderWidth: 3,
+		borderColor: '#0f0',
+	},
+	scrollContainer: {
+		height: '100%',
 		justifyContent: 'space-around',
-		alignItems: 'center'
+		alignItems: 'center',
+		backgroundColor: '#0f0',
+		borderWidth: 3,
+		borderColor: '#4a8',
 	},
 	mediaContainer: {
 		width: '100%',
