@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
 	container: {
 		width: _size,
 		height: _size,
+		marginVertical: 60,
 		backgroundColor: '#fff',
 		borderRadius: _size/5,
 	}

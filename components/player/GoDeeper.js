@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
 	View,
 	Text,
@@ -7,14 +7,25 @@ import {
 	Dimensions
 } from 'react-native';
 
-export default function GoDeeper() {
-	return (
-		<TouchableOpacity onPress={() => alert('pop')}>
-			<View style={styles.container}>
-				<Text stle={{fontColor: '#fff', fontSize: 32}}>Go Deeper</Text>
-			</View>
-		</TouchableOpacity>
-	);
+export default class GoDeeper extends Component {
+
+	constructor(props){
+		super(props);
+
+		// State Initialization
+		this.state = { isClicked: false };
+	}
+
+	render(){
+		return (
+			<TouchableOpacity onPress={() => this.setState(() => ({isClicked: !this.state.isClicked}))}>
+				<View style={styles.container}>
+					<Text style={{fontWeight: 'bold', color: '#fff', fontSize: 22}}>Go Deeper</Text>
+					<Text style={{color: '#fff'}}>{this.state.isClicked ? "true" : "false"}</Text>
+				</View>
+			</TouchableOpacity>
+		);
+	}
 }
 
 let _width = Dimensions.get('window').width;

@@ -27,6 +27,7 @@ export default class Media_PlayPause extends Component {
 			soundObject: new Audio.Sound(),
 			time_current: 0,
 			time_duration: 0,
+			goDeeper: false,
 		};
 	}
 
@@ -122,10 +123,24 @@ export default class Media_PlayPause extends Component {
 	// Temporary Killswitch
 	_kill_Audio() { this.state.soundObject.stopAsync(); }
 
+	_scrollTo(){
+		if (this.state.goDeeper)
+			this.scroll.scrollTo({x: 0, y: 0, animated: true});
+		else
+			this.scroll.scrollToEnd();
+
+		this.setState(() => ({ goDeeper: !this.state.goDeeper }));
+	}
+
 	render() {		
 		return (
 			<View style={styles.container}>
-				<ScrollView contentContainerStyle={{flexGrow: 1}} style={{backgroundColor: '#00f'}}>
+				<ScrollView 
+					ref={(scroll) => {this.scroll = scroll;}}
+					scrollEnabled={false}
+					contentContainerStyle={{flexGrow: 1}} 
+					style={{backgroundColor: '#00f'}}
+				>
 					<View style={styles.scrollContainer}>
 						<AlbumCard />
 						<View style={styles.mediaContainer}>
@@ -159,7 +174,15 @@ export default class Media_PlayPause extends Component {
 						<Text style={styles.timelineText}>Current: {this._toTime(this.state.time_current)}</Text>
 						<Text style={styles.timelineText}>Length: {this._toTime(this.state.time_duration)} </Text>
 					</View>
-					<GoDeeper/>
+					{/*<GoDeeper />*/}
+					<TouchableOpacity 
+						style={{width: '80%', height: 300, backgroundColor: '#888', marginTop: 10, borderRadius: 20}}
+						onPress={() => {this._scrollTo()}}
+					>
+						<View style={{alignItems: 'center'}}>
+							<Text style={{fontWeight: 'bold', fontSize: 20,  color: '#fff'}}>Go Deeper</Text>
+						</View>
+					</TouchableOpacity>
 				</View>
 			</ScrollView>
 		</View>
@@ -171,21 +194,16 @@ let _height = Dimensions.get('window').height
 
 const styles = StyleSheet.create({
 	container: {
-		height: '100%',
-		backgroundColor: '#3c3838',
-		borderWidth: 3,
-		borderColor: '#0f0',
 	},
 	scrollContainer: {
 		height: '100%',
-		justifyContent: 'space-around',
+		justifyContent: 'space-between',
 		alignItems: 'center',
-		backgroundColor: '#0f0',
-		borderWidth: 3,
-		borderColor: '#4a8',
+		backgroundColor: '#3c3838',
 	},
 	mediaContainer: {
 		width: '100%',
+		marginVertical: 40,
 		flexDirection: 'row',
 		justifyContent: 'space-around',
 	},
@@ -200,6 +218,7 @@ const styles = StyleSheet.create({
 	},
 	sliderContainer: {
 		width: '80%',
+		marginBottom: 20,
 	},
 	timelineContainer: {
 		flexDirection: 'row',
