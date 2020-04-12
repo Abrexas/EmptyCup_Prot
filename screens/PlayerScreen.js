@@ -29,13 +29,15 @@ export default class Media_PlayPause extends Component {
 			time_duration: 0,
 			goDeeper: false,
 		};
+
+		this._scrollTo = this._scrollTo.bind(this);
 	}
 
 	componentDidMount() {
 		try {
 			(async() => {
 				await this.state.soundObject.loadAsync(require('../assets/sounds/Menu.mp3'));
-				await this.state.soundObject.setProgressUpdateIntervalAsync(1000);
+				await this.state.soundObject.setProgressUpdateIntervalAsync(500);
 				await Audio.setAudioModeAsync({
 					staysActiveInBackground: true,
 					interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
@@ -73,6 +75,15 @@ export default class Media_PlayPause extends Component {
 			this.setState(() => ({ time_current: playbackStatus.positionMillis }))
 		}
 
+		if (playbackStatus.didJustFinish) {
+			this.state.soundObject.setPositionAsync(0);
+			this.state.soundObject.pauseAsync()
+			this.setState(({ 
+				isPlaying: false,
+				mediaText: " > ",
+				time_current: 0
+			}))
+		}
 	}
 
 	_toTime(s) {
@@ -100,6 +111,8 @@ export default class Media_PlayPause extends Component {
 				this.state.soundObject.pauseAsync()
 			}
 			else {	
+				if (this.state.time_current == this.state.time_duration)
+					this.setState({ time_current: 0 });
 				this.setState(() => ({ isPlaying: true }))
 				this.setState(() => ({ mediaText: " || " }))
 				this.state.soundObject.playAsync();
@@ -107,8 +120,13 @@ export default class Media_PlayPause extends Component {
 		}
 	}
 
+	_clamp(val, min, max) {
+		    return val > max ? max : val < min ? min : val;
+	}
+
 	_skip(dir) {
-		this.state.soundObject.playFromPositionAsync(this.state.time_current + dir*10000);
+		this.state.soundObject.setPositionAsync(this.state.time_current + dir*10000);
+		this.setState({ time_current: this._clamp(this.state.time_current + dir*10000, 0, this.state.time_duration)});
 	}
 
 	_onSlidingComplete(val){
@@ -118,6 +136,10 @@ export default class Media_PlayPause extends Component {
 		else{
 			this.state.soundObject.setPositionAsync(val);
 		}
+	}
+
+	_onSlideValueChange(val){
+		this.setState({ time_current: val });
 	}
 
 	// Temporary Killswitch
@@ -156,33 +178,28 @@ export default class Media_PlayPause extends Component {
 								<Text> +10 </Text>
 							</TouchableOpacity>
 
-							{/*
-					<TouchableOpacity style={styles.buttonContainer} onPress={ () => this._kill_Audio() }>
-						<Text>Stop</Text>
-						</TouchableOpacity>
-						*/}
 					</View>
 					<View style={styles.sliderContainer}>
 						<Slider 
 							minimumTrackTintColor='#c4a'
-							value={this.state.time_current}
+							value={false ? this.state.time_current : 0}
 							onSlidingComplete={(val) => this._onSlidingComplete(val)} 
 							maximumValue={this.state.time_duration}
+							onValueChange={(val) => this._onSlideValueChange(val)}
 						/>
 					</View>
 					<View style={styles.timelineContainer}>
 						<Text style={styles.timelineText}>Current: {this._toTime(this.state.time_current)}</Text>
 						<Text style={styles.timelineText}>Length: {this._toTime(this.state.time_duration)} </Text>
 					</View>
-					{/*<GoDeeper />*/}
-					<TouchableOpacity 
-						style={{width: '80%', height: 300, backgroundColor: '#888', marginTop: 10, borderRadius: 20}}
-						onPress={() => {this._scrollTo()}}
-					>
-						<View style={{alignItems: 'center'}}>
-							<Text style={{fontWeight: 'bold', fontSize: 20,  color: '#fff'}}>Go Deeper</Text>
-						</View>
-					</TouchableOpacity>
+					<GoDeeper 
+						scroll={this._scrollTo}
+						deeperData={[
+							{title: 'First', msg: "Welcom to the first button"}, 
+							{title: 'Second', msg: "Tryna go deep?"}, 
+							{title: 'Third', msg: "Already at the bottom, son"}
+						]}
+					/>
 				</View>
 			</ScrollView>
 		</View>

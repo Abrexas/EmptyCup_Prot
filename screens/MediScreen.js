@@ -33,8 +33,6 @@ export default function MediScreen(props) {
 			<View style={styles.container}>
 				<ScrollView>
 					{arr}
-					{/*
-					*/}
 				</ScrollView>
 			</View>
 		</View>
