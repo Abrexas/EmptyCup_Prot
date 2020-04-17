@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
 		width: _width*0.8,
 		height: 300,
 		paddingBottom: 30,
-		borderRadius: 20
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20
 	},
 	contentContainer: {
 		height: 60,

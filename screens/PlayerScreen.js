@@ -60,8 +60,6 @@ export default class Media_PlayPause extends Component {
 		if (this.state.isPlaying){
 			this._kill_Audio();
 		}
-		console.log("Cutting Audio...")
-		console.log('unmount')
 	}
 
 	// Confirm soundObject is Loaded
@@ -148,8 +146,9 @@ export default class Media_PlayPause extends Component {
 	_scrollTo(){
 		if (this.state.goDeeper)
 			this.scroll.scrollTo({x: 0, y: 0, animated: true});
-		else
+		else{
 			this.scroll.scrollToEnd();
+		}
 
 		this.setState(() => ({ goDeeper: !this.state.goDeeper }));
 	}
@@ -159,7 +158,7 @@ export default class Media_PlayPause extends Component {
 			<View style={styles.container}>
 				<ScrollView 
 					ref={(scroll) => {this.scroll = scroll;}}
-					scrollEnabled={false}
+					scrollEnabled={this.state.goDeeper ? true : false}
 					contentContainerStyle={{flexGrow: 1}} 
 					style={{backgroundColor: '#00f'}}
 				>
@@ -182,15 +181,15 @@ export default class Media_PlayPause extends Component {
 					<View style={styles.sliderContainer}>
 						<Slider 
 							minimumTrackTintColor='#c4a'
-							value={false ? this.state.time_current : 0}
+							value={true ? this.state.time_current : 0}
 							onSlidingComplete={(val) => this._onSlidingComplete(val)} 
 							maximumValue={this.state.time_duration}
 							onValueChange={(val) => this._onSlideValueChange(val)}
 						/>
 					</View>
 					<View style={styles.timelineContainer}>
-						<Text style={styles.timelineText}>Current: {this._toTime(this.state.time_current)}</Text>
-						<Text style={styles.timelineText}>Length: {this._toTime(this.state.time_duration)} </Text>
+						<Text style={styles.timelineText}>{this._toTime(this.state.time_current)}</Text>
+						<Text style={styles.timelineText}>{this._toTime(this.state.time_duration)} </Text>
 					</View>
 					<GoDeeper 
 						scroll={this._scrollTo}
@@ -235,14 +234,14 @@ const styles = StyleSheet.create({
 	},
 	sliderContainer: {
 		width: '80%',
-		marginBottom: 20,
+		marginBottom: 10,
 	},
 	timelineContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-around',
 		width: '100%',
-		backgroundColor: '#444',
-		borderRadius: 5,
+		backgroundColor: '#3c3838',
+		marginBottom: 10
 	},
 	timelineText: {
 		color: '#fff',

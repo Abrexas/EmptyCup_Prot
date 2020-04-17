@@ -3,12 +3,19 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { SplashScreen } from 'expo';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+
+// Redux Imports
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import allReducers from './reducers/index';
+
+// Navigation Imports
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import AppNavigator from './navigation/AppNavigator';
 import useLinking from './navigation/useLinking';
 
+const store = createStore(allReducers);
 const Stack = createStackNavigator();
 
 export default function App(props) {
@@ -48,14 +55,16 @@ export default function App(props) {
 		return null;
 	} else {
 		return (
-			<View style={styles.container}>
-				{Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-				<NavigationContainer ref={containerRef} initialState={initialNavigationState}>
-					<Stack.Navigator>
-						<Stack.Screen name="Root" component={AppNavigator} options={{ headerShown: false }} />
-					</Stack.Navigator>
-				</NavigationContainer>
-			</View>
+			<Provider store={store}>
+				<View style={styles.container}>
+					{Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+					<NavigationContainer ref={containerRef} initialState={initialNavigationState}>
+						<Stack.Navigator>
+							<Stack.Screen name="Root" component={AppNavigator} options={{ headerShown: false }} />
+						</Stack.Navigator>
+					</NavigationContainer>
+				</View>
+			</Provider>
 		);
 	}
 }
