@@ -6,6 +6,7 @@ import {
 	View,
 	Button,
 	Modal,
+	TextInput,
 } from 'react-native';
 
 // FIREBASE IMPORTS
@@ -28,8 +29,19 @@ export default function LoginScreen(props) {
 	const testPrint = useSelector(state => state.test);
 
 	// STATE MACHINE
+	const user = firebaseApp.auth().currentUser;
 	const [regVisi, setRegVisi] = useState(true);
-	function _togModal() { setRegVisi(!regVisi); };
+	// ______IMPLEMENT REDUX________
+	const [user, pass] = null;
+
+	// SET USER DATA
+	function _togModal(name, home) { 
+		firebaseApp.database().ref('users/' + user.uid).set({
+			Username: "Tohzt",
+			Country: "USA"
+		});
+		setRegVisi(!regVisi);
+	};
 
 	return (
 		<View style={styles.container}>
@@ -39,50 +51,60 @@ export default function LoginScreen(props) {
 				transparent={false}
 				visible={regVisi}
 				onRequestClose={() => {
-					_togModal();	
+					setRegVisi(!regVisi);
 				}}
 			>
-				<RegisterModal login={() => _togModal()}/>
+				<RegisterModal login={(name, home) => _togModal(name, home)}/>
 			</Modal>
 
-			<Text style={styles.header}>Sign In</Text>
-
 			{/** !REMOVE NAVIGATION FROM HERE! **/}
-			<UserIcon navigation={props.navigation}/>
+			<View style={{height: '50%', width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+				<UserIcon navigation={props.navigation}/>
+			</View>
 
-			<View>
-				<SignIn navigation={props.navigation}/>
-				<View style={{flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10}}>
-					<TouchableOpacity>
-						<Text style={{color: "#888"}}>Forgot Password?</Text>
-					</TouchableOpacity>
-					<TouchableOpacity>
-						<Text style={{color: "#888"}}>Switch Account</Text>
-					</TouchableOpacity>
+			{/* SIGN IN CREDENTIALS */}
+			<View style={styles.subContainer}>
+				<TextInput style={styles.formInput} placeholder="MyEmail@domain.com"/>
+				<View style={{paddingVertical: 4}} />
+				<TextInput style={styles.formInput} placeholder="Password"/>
+			</View>
+
+			<View style={styles.subContainer}>
+				<View>
+					<SignIn navigation={props.navigation}/>
+					<View style={{flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10}}>
+						<TouchableOpacity>
+							<Text style={{color: "#888"}}>Forgot Password?</Text>
+						</TouchableOpacity>
+						<TouchableOpacity>
+							<Text style={{color: "#888"}}>Switch Account</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
-			</View>
+				<View style={{paddingVertical: 4}} />
 
-			{/*<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Register'})} style={{alignItems: 'center'}}>*/}
-			<TouchableOpacity 
-				onPress={() => setRegVisi(!regVisi)} 
-				style={{alignItems: 'center'}}
-			>
-				<Text style={{color: '#fff'}}>REGISTER</Text>
-			</TouchableOpacity>
-
-			<View style={{width: 300, flexDirection: 'row', justifyContent: 'space-around'}}>
-				<Button title='Test'   onPress={() => console.log(testPrint)} />
-				<Button 
-					title='push'
+				<TouchableOpacity style={{alignItems: 'center'}}
 					onPress={() => {
-						const user = firebaseApp.auth().currentUser;
-						firebaseApp.database().ref('users/' + user.uid).set({
-							highscore: 101,
-						});
+						firebaseApp.auth().signOut();
+						setRegVisi(!regVisi);
 					}} 
-				/>
-				<Button title='Update' onPress={() => dispatch(testReducer())} />
+				>
+					<Text style={{color: '#fff'}}>REGISTER</Text>
+				</TouchableOpacity>
 			</View>
+
+			{/*
+				<View style={{width: 300, flexDirection: 'row', justifyContent: 'space-around'}}>
+					<Button title='Test'   onPress={() => console.log(testPrint)} />
+					<Button 
+						title='push'
+						onPress={() => {
+							console.log('...');
+						}} 
+					/>
+					<Button title='Update' onPress={() => dispatch(testReducer())} />
+				</View>
+			*/}
 		</View>
 	);
 }
@@ -94,8 +116,19 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-around'
 	},
-	header: {
-		fontSize: 32,
-		color: '#fff',
+	formInput: {
+		height: 48,
+		width: '70%',
+		color: "#fff",
+		backgroundColor: '#fff',
+		borderWidth: 2,
+		borderColor:'#000',
+		borderRadius: 10,
+		textAlign: 'center',
+	},
+	subContainer: {
+		width: '100%',
+		alignItems: 'center',
+		justifyContent: 'space-between',
 	},
 });

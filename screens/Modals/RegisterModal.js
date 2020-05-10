@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Picker } from 'react-native';
+import { 
+	StyleSheet, 
+	Text, 
+	View, 
+	TextInput, 
+	TouchableOpacity, 
+	Picker 
+} from 'react-native';
 
 // FIREBASE IMPORTS
 import { firebaseApp } from '../fb/config';
@@ -8,9 +15,10 @@ export default function RegisterScreen(props) {
 
 	//STATE MACHINE
 	const [selectedValue, setSelectedValue] = useState("usa");
-	const [user, setUser] = useState('email');
-	const [mail, setMail] = useState('email@email.com');
-	const [pass, setPass] = useState('123qwe');
+	const [name, setName] = useState('name');
+	const [mail, setMail] = useState('email3@email.com');
+	const [pass, setPass] = useState('123qwE');
+	const [home, setHome] = useState('USB');
 
 
 	// FUNCTIONS
@@ -19,10 +27,12 @@ export default function RegisterScreen(props) {
 			.auth()
 			.signInWithEmailAndPassword(mail, pass)
 			.then(() => props.login())
-			.catch(error => console.log(error))
+			.catch(error => console.log(error));
 
-		// TOGGLE MODAL
- 		props.login();
+		if (firebaseApp.auth().currentUser != null){
+			// TOGGLE MODAL
+			props.login(name, home);
+		}
 	}
 
 	return (
@@ -55,11 +65,25 @@ export default function RegisterScreen(props) {
 				<Text style={styles.formText}>Confirm Password</Text>
 				<TextInput secureTextEntry={true} style={styles.formInput} placeholder="(required)"/>
 			</View>
-			<TouchableOpacity onPress={() => signIn()}>
-				<View style={styles.registerButton}>
-					<Text style={{color: '#8af'}}>REGISTER</Text>
-				</View>
-			</TouchableOpacity>
+
+			<View>
+				<TouchableOpacity onPress={() => signIn()}>
+					<View style={styles.registerButton}>
+						<Text style={{color: '#8af'}}>REGISTER</Text>
+					</View>
+				</TouchableOpacity>
+
+				<TouchableOpacity 
+					style={{paddingTop: 20, alignItems: 'center'}}
+					onPress={() => {  
+						props.login(null, null);
+					}}
+				>
+					<View>
+						<Text style={{color: '#8af'}}>(Sign In)</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
 		</View>
 	);
 }
