@@ -54,18 +54,6 @@ export default function AppNavigator({ navigation, route }) {
 				}}
 			/>
 			<StackNav.Screen
-				name="Register"
-				component={RegisterScreen}
-				options={{
-					title: 'Register Screen',
-					headerShown: false,
-					transitionSpec: {
-						open: config,
-						close: config,
-					},
-				}}
-			/>
-			<StackNav.Screen
 				name="Key"
 				component={KeyScreen}
 				options={{
@@ -129,8 +117,6 @@ function getHeaderTitle(route) {
 			return 'Select a Meditation';
 		case 'Links':
 			return 'Links to learn more';
-		case 'Register':
-			return 'Register New User';
 		case 'Player':
 			return 'Medi Name';
 	}

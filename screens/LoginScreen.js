@@ -1,11 +1,15 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { 
 	StyleSheet, 
 	Text, 
 	TouchableOpacity, 
 	View,
-	Button
+	Button,
+	Modal,
 } from 'react-native';
+
+// FIREBASE IMPORTS
+import { firebaseApp } from './fb/config';
 
 // Redux Import
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,18 +19,37 @@ import { testReducer } from '../actions/index';
 import { MonoText } from '../components/StyledText';
 import SignIn from '../components/login/SignIn';
 import UserIcon from '../components/login/UserIcon';
+import RegisterModal from './Modals/RegisterModal';
 
 export default function LoginScreen(props) {
 
-	// Initialize Redux Access
+	// INITIALIZE REDUX 
 	const dispatch = useDispatch();
 	const testPrint = useSelector(state => state.test);
 
+	// STATE MACHINE
+	const [regVisi, setRegVisi] = useState(true);
+	function _togModal() { setRegVisi(!regVisi); };
+
 	return (
 		<View style={styles.container}>
+			{/** MODAL FOR REGISTRATION **/}
+			<Modal
+				animationType="slide"
+				transparent={false}
+				visible={regVisi}
+				onRequestClose={() => {
+					_togModal();	
+				}}
+			>
+				<RegisterModal login={() => _togModal()}/>
+			</Modal>
+
 			<Text style={styles.header}>Sign In</Text>
+
 			{/** !REMOVE NAVIGATION FROM HERE! **/}
 			<UserIcon navigation={props.navigation}/>
+
 			<View>
 				<SignIn navigation={props.navigation}/>
 				<View style={{flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10}}>
@@ -38,13 +61,28 @@ export default function LoginScreen(props) {
 					</TouchableOpacity>
 				</View>
 			</View>
-			<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Register'})} style={{alignItems: 'center'}}>
+
+			{/*<TouchableOpacity onPress={() => props.navigation.navigate({name: 'Register'})} style={{alignItems: 'center'}}>*/}
+			<TouchableOpacity 
+				onPress={() => setRegVisi(!regVisi)} 
+				style={{alignItems: 'center'}}
+			>
 				<Text style={{color: '#fff'}}>REGISTER</Text>
 			</TouchableOpacity>
 
-
-			<Button title='Test' onPress={() => console.log(testPrint)} />
-			<Button title='Update' onPress={() => dispatch(testReducer())} />
+			<View style={{width: 300, flexDirection: 'row', justifyContent: 'space-around'}}>
+				<Button title='Test'   onPress={() => console.log(testPrint)} />
+				<Button 
+					title='push'
+					onPress={() => {
+						const user = firebaseApp.auth().currentUser;
+						firebaseApp.database().ref('users/' + user.uid).set({
+							highscore: 101,
+						});
+					}} 
+				/>
+				<Button title='Update' onPress={() => dispatch(testReducer())} />
+			</View>
 		</View>
 	);
 }
