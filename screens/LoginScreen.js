@@ -31,16 +31,24 @@ export default function LoginScreen(props) {
 	// STATE MACHINE
 	const user = firebaseApp.auth().currentUser;
 	const [regVisi, setRegVisi] = useState(true);
+	const [loginEmail, setLoginEmail] = useState(undefined);
+	const [loginPass, setLoginPass]   = useState(undefined);
+
 	// ______IMPLEMENT REDUX________
-	const [user, pass] = null;
+	//const [user, pass] = null;
 
 	// SET USER DATA
 	function _togModal(name, home) { 
+		/*
 		firebaseApp.database().ref('users/' + user.uid).set({
 			Username: "Tohzt",
 			Country: "USA"
 		});
+
 		setRegVisi(!regVisi);
+		*/
+		
+		props.navigation.navigate("Key");	
 	};
 
 	return (
@@ -64,14 +72,43 @@ export default function LoginScreen(props) {
 
 			{/* SIGN IN CREDENTIALS */}
 			<View style={styles.subContainer}>
-				<TextInput style={styles.formInput} placeholder="MyEmail@domain.com"/>
+				<TextInput 
+					style={styles.formInput} 
+					placeholder="MyEmail@domain.com"
+					onChangeText={text => { setLoginEmail(text) }}
+				/>
 				<View style={{paddingVertical: 4}} />
-				<TextInput style={styles.formInput} placeholder="Password"/>
+				
+				<TextInput 
+					style={styles.formInput} 
+					placeholder="Password"
+					onChangeText={text => { setLoginPass(text) }}
+				/>
+
+				<View style={{paddingVertical: 4}} />
+				<TouchableOpacity
+					onPress={() => {
+						console.log(loginEmail)
+					}}
+				>
+					<View style={{
+						backgroundColor: '#348', 
+						height: 32, 
+						width: 200, 
+						borderRadius: 16, 
+						alignItems: 'center', 
+						justifyContent: 'center'
+					}}>
+						<Text style={{color: 'white'}}>TEST BUTTON</Text>
+					</View>
+				</TouchableOpacity>
 			</View>
 
 			<View style={styles.subContainer}>
 				<View>
+
 					<SignIn navigation={props.navigation}/>
+
 					<View style={{flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10}}>
 						<TouchableOpacity>
 							<Text style={{color: "#888"}}>Forgot Password?</Text>
@@ -119,7 +156,7 @@ const styles = StyleSheet.create({
 	formInput: {
 		height: 48,
 		width: '70%',
-		color: "#fff",
+		color: "#000",
 		backgroundColor: '#fff',
 		borderWidth: 2,
 		borderColor:'#000',

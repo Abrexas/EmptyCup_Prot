@@ -15,17 +15,17 @@ export default function RegisterScreen(props) {
 
 	//STATE MACHINE
 	const [selectedValue, setSelectedValue] = useState("usa");
-	const [name, setName] = useState('name');
-	const [mail, setMail] = useState('email3@email.com');
-	const [pass, setPass] = useState('123qwE');
-	const [home, setHome] = useState('USB');
+	const [name, setName] = useState(undefined);
+	const [mail, setMail] = useState(undefined);
+	const [pass, setPass] = useState(undefined);
+	const [home, setHome] = useState(undefined);
 
 
 	// FUNCTIONS
 	function signIn() {
 		firebaseApp
 			.auth()
-			.signInWithEmailAndPassword(mail, pass)
+			.createUserWithEmailAndPassword(mail, pass)
 			.then(() => props.login())
 			.catch(error => console.log(error));
 
@@ -57,10 +57,19 @@ export default function RegisterScreen(props) {
 				</View>
 
 				<Text style={styles.formText}>Email</Text>
-				<TextInput style={styles.formInput} placeholder="(required)"/>
+				<TextInput 
+					style={styles.formInput} 
+					placeholder="(required)"
+					onChangeText={text => { setMail(text) }}
+				/>
 
 				<Text style={styles.formText}>Password</Text>
-				<TextInput secureTextEntry={true} style={styles.formInput} placeholder="(required)"/>
+				<TextInput 
+					secureTextEntry={true} 
+					style={styles.formInput} 
+					placeholder="(required)"
+					onChangeText={text => { setPass(text) }}
+				/>
 
 				<Text style={styles.formText}>Confirm Password</Text>
 				<TextInput secureTextEntry={true} style={styles.formInput} placeholder="(required)"/>
@@ -70,17 +79,6 @@ export default function RegisterScreen(props) {
 				<TouchableOpacity onPress={() => signIn()}>
 					<View style={styles.registerButton}>
 						<Text style={{color: '#8af'}}>REGISTER</Text>
-					</View>
-				</TouchableOpacity>
-
-				<TouchableOpacity 
-					style={{paddingTop: 20, alignItems: 'center'}}
-					onPress={() => {  
-						props.login(null, null);
-					}}
-				>
-					<View>
-						<Text style={{color: '#8af'}}>(Sign In)</Text>
 					</View>
 				</TouchableOpacity>
 			</View>
