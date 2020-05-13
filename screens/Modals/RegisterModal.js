@@ -15,24 +15,84 @@ export default function RegisterScreen(props) {
 
 	//STATE MACHINE
 	const [selectedValue, setSelectedValue] = useState("usa");
-	const [name, setName] = useState(undefined);
-	const [mail, setMail] = useState(undefined);
-	const [pass, setPass] = useState(undefined);
+	const [name, setName] = useState('');
+	const [mail, setMail] = useState('');
+	const [pass, setPass] = useState('');
+	const [conf, setConf] = useState('');
 	const [home, setHome] = useState(undefined);
+	const [hasError, setHasError] = useState(false);
 
 
 	// FUNCTIONS
+
+	function validate_signIn() {
+		var approved = true;
+		var error_log = [];
+		
+		// CHECK EMAIL LENGTH
+		if (mail.length = 0) {
+			error_log.push("Email Is Required")
+		}
+		// CHECK EMAIL FORMATTING
+		if (!isValidEmail(mail)) { 
+			error_log.push("Invalid Email");
+			approved = false;
+		}
+		// CHECK PASSWORD ALPHANUMERIC
+		if (!isAlphanumeric(pass)) {
+			error_log.push("Passwords must container Letters AND Numbers");
+			approved = false;
+		}
+		// CHECK PASSWORD LENGTH
+		if (pass.length < 6) {
+			error_log.push("Password must be at least 6 characters in length.");
+			approved = false;
+		}
+		// CHECK PASSWORD CONFIRMATION
+		if (pass !== conf) {
+			error_log.push("Password does NOT match Confirmation.")
+			approved = false;
+		}
+
+		// REGISTRATION APPROVED
+		if (approved) {
+			console.log("Validation Approved");
+			signIn();
+		}
+		else {
+			alert('-' + error_log.join('\n- '));
+			console.log("Failed: -Validation");
+		}
+	}
+
+	// VERIFY EMAIL FORMAT
+	function isValidEmail(str) {
+		var val = str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/g);
+
+		return (val != null);
+	}
+	// VERIFY THAT PASSWORD IS ALPHANUMERIC
+	function isAlphanumeric(str) {
+		var hasNum = str.match(/[0-9]/g);
+		var hasLet = str.match(/[a-z,A-Z]/g);
+		
+		return (hasNum != null && hasLet != null);
+	}
+	
+
 	function signIn() {
+		// TEST PRING EMAIL AND PASS
+		console.log("Email: " + mail); 
+		console.log("Pass: " + pass);
+
+		// ATTEMPT LOGIN
 		firebaseApp
 			.auth()
 			.createUserWithEmailAndPassword(mail, pass)
-			.then(() => props.login())
-			.catch(error => console.log(error));
-
-		if (firebaseApp.auth().currentUser != null){
-			// TOGGLE MODAL
-			props.login(name, home);
-		}
+			.catch(() => {
+				console.log("No Errors")
+			}
+		);
 	}
 
 	return (
@@ -72,13 +132,37 @@ export default function RegisterScreen(props) {
 				/>
 
 				<Text style={styles.formText}>Confirm Password</Text>
-				<TextInput secureTextEntry={true} style={styles.formInput} placeholder="(required)"/>
+				<TextInput 
+					secureTextEntry={true} 
+					style={styles.formInput} 
+					placeholder="(required)"
+					onChangeText={text => { setConf(text) }}
+				/>
 			</View>
 
-			<View>
-				<TouchableOpacity onPress={() => signIn()}>
+			<View style={{flexDirection: 'row', justifyContent: 'space-between', width: '80%',  alignItems: 'center'}}>
+				<TouchableOpacity onPress={() => validate_signIn()}>
 					<View style={styles.registerButton}>
 						<Text style={{color: '#8af'}}>REGISTER</Text>
+					</View>
+				</TouchableOpacity>
+
+				<TouchableOpacity 
+					onPress={() => {
+						firebaseApp.auth().signOut();
+						console.log("..........")
+					}}
+				>
+					<View style={{
+						width: 40, 
+						height: 40, 
+						borderRadius: 20, 
+						borderWidth: 2, 
+						alignItems: 'center', 
+						justifyContent: 'center', 
+						backgroundColor: '#888'
+					}}>
+						<Text>...</Text>
 					</View>
 				</TouchableOpacity>
 			</View>
