@@ -15,6 +15,7 @@ import { firebaseApp } from './fb/config';
 // Redux Import
 import { useSelector, useDispatch } from 'react-redux';
 import { testReducer } from '../actions/index';
+import UserData from '../user/data'
 
 // Import Custom Components
 import { MonoText } from '../components/StyledText';
@@ -28,27 +29,36 @@ export default function LoginScreen(props) {
 	const dispatch = useDispatch();
 	const testPrint = useSelector(state => state.test);
 
-	// STATE MACHINE
-	const user = firebaseApp.auth().currentUser;
-	const [regVisi, setRegVisi] = useState(true);
-	const [loginEmail, setLoginEmail] = useState(undefined);
-	const [loginPass, setLoginPass]   = useState(undefined);
+	/* STATE MACHINE */
+	//const user = firebaseApp.auth().currentUser;
+	const [regVisi, setRegVisi] = useState(false);
+	// USER VARIABLES
+	const [loginMail, setLoginMail] = useState(undefined);
+	const [loginName, setLoginName] = useState(undefined);
+	const [user, setUser] = useState(new UserData(null, null, null));
 
 	// ______IMPLEMENT REDUX________
 	//const [user, pass] = null;
 
 	// SET USER DATA
-	function _togModal(name, home) { 
-		/*
-		firebaseApp.database().ref('users/' + user.uid).set({
-			Username: "Tohzt",
-			Country: "USA"
-		});
+	function _togModal(tog, usrName, usrMail) { 
+		if (tog) {
+			if (regVisi){
+				console.log("User Info:");
+				console.log(usrName);
+				console.log(usrMail);
+				/*
+				firebaseApp.database().ref('users/' + user.uid).set({
+					Username: "Tohzt",
+					Country: "USA"
+				});
+				*/
 
-		setRegVisi(!regVisi);
-		*/
-		
-		props.navigation.navigate("Key");	
+				setRegVisi(!regVisi);
+				
+				//props.navigation.navigate("Key");	
+			}
+		}	
 	};
 
 	return (
@@ -62,7 +72,11 @@ export default function LoginScreen(props) {
 					setRegVisi(!regVisi);
 				}}
 			>
-				<RegisterModal login={(name, home) => _togModal(name, home)}/>
+				<RegisterModal 
+					login={(tog, name, mail) => _togModal(tog, name, mail)}
+					name='_name_'
+					mail='_mail_'
+				/>
 			</Modal>
 
 			{/** !REMOVE NAVIGATION FROM HERE! **/}
@@ -86,9 +100,12 @@ export default function LoginScreen(props) {
 				/>
 
 				<View style={{paddingVertical: 4}} />
+
+				{/*------------------------------
+				----------TEST-BUTTON---------*/}
 				<TouchableOpacity
 					onPress={() => {
-						console.log(loginEmail)
+						console.log(user.name)
 					}}
 				>
 					<View style={{
@@ -102,6 +119,7 @@ export default function LoginScreen(props) {
 						<Text style={{color: 'white'}}>TEST BUTTON</Text>
 					</View>
 				</TouchableOpacity>
+
 			</View>
 
 			<View style={styles.subContainer}>
