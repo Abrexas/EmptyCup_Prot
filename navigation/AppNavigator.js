@@ -4,7 +4,6 @@ import TabBarIcon from '../components/TabBarIcon';
 
 // Imoprt Screens
 import LoginScreen    from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
 import KeyScreen      from '../screens/KeyScreen';
 import MediScreen  	 from '../screens/MediScreen';
 import PlayerScreen 	 from '../screens/PlayerScreen';

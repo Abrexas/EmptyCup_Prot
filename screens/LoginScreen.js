@@ -35,18 +35,10 @@ export default function LoginScreen(props) {
 	// USER VARIABLES
 	const [loginMail, setLoginMail] = useState(undefined);
 	const [loginName, setLoginName] = useState(undefined);
-	const [user, setUser] = useState(new UserData(null, null, null));
+	const [user, setUser] = useState(new UserData(Math.floor(Math.random()*10), 'uName', 'uMail'));
 
 	// ______IMPLEMENT REDUX________
 	//const [user, pass] = null;
-
-	// SET USER DATA
-	function _togModal(tog, usrName, usrMail) { 
-		if (tog) {
-			if (regVisi){
-				console.log("User Info:");
-				console.log(usrName);
-				console.log(usrMail);
 				/*
 				firebaseApp.database().ref('users/' + user.uid).set({
 					Username: "Tohzt",
@@ -54,12 +46,26 @@ export default function LoginScreen(props) {
 				});
 				*/
 
+	// SET USER DATA
+	function _togModal(tog, uName, uMail) { 
+		if (tog) {
+			if (regVisi){
+				console.log("User Info:");
+
 				setRegVisi(!regVisi);
 				
-				//props.navigation.navigate("Key");	
+				// UPDATE USER DATA
+				_updateUserData(uName, uMail)
 			}
 		}	
 	};
+
+	function _updateUserData(uName, uMail) {
+		console.log('Updating User Data...: '+uName+" / "+uMail)
+
+		setLoginName(uName);
+		setLoginMail(uMail);
+	}
 
 	return (
 		<View style={styles.container}>
@@ -105,7 +111,9 @@ export default function LoginScreen(props) {
 				----------TEST-BUTTON---------*/}
 				<TouchableOpacity
 					onPress={() => {
-						console.log(user.name)
+						console.log("ID: "+user.id);
+						console.log("Name: "+user.name+" > "+loginName);
+						console.log("Email: "+user.mail+" > "+loginMail);
 					}}
 				>
 					<View style={{

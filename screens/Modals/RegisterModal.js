@@ -5,7 +5,6 @@ import {
 	View, 
 	TextInput, 
 	TouchableOpacity, 
-	Picker 
 } from 'react-native';
 
 // FIREBASE IMPORTS
@@ -21,7 +20,6 @@ export default class RegisterScreen extends Component {
 			mail: '',
 			pass: '',
 			conf: '',
-			home: undefined,
 			hasError: false,
 		};
 	}
@@ -33,19 +31,18 @@ export default class RegisterScreen extends Component {
 
 	// CHECK FOR AUTH_STATE_CHANGE
 	componentDidUpdate() {
-		/*(props)
-		firebaseApp.auth().onAuthStateChanged(function(user) {
+		firebaseApp.auth().onAuthStateChanged(user => {
 			if (user) {
 				// SIGN-IN APPROVED
-				props.login(true, props.name, props.mail)
+				console.log("The shit worked!")
+				this.props.login(true, this.state.name, this.state.mail)
 			} else {
 				// No user is signed in.
 			}
 		});
-		*/
 	}
 
-	// FUNCTIONS
+	// VALIDATE CREDENTIALS
 	validate_signIn() {
 		
 		var approved = true;
@@ -101,7 +98,6 @@ export default class RegisterScreen extends Component {
 		return (hasNum != null && hasLet != null);
 	}
 
-
 	signIn() {
 		// ATTEMPT LOGIN
 		firebaseApp
@@ -112,17 +108,6 @@ export default class RegisterScreen extends Component {
 				console.log(error)
 			}
 		);
-
-		firebaseApp.auth().onAuthStateChanged(function(user) {
-			if (user) {
-				// SIGN-IN APPROVED
-				console.log("The shit worked!")
-				alert("!!!")
-				//props.login(true, props.name, props.mail)
-			} else {
-				// No user is signed in.
-			}
-		});
 	}
 
 	render() {
@@ -130,29 +115,13 @@ export default class RegisterScreen extends Component {
 			<View style={styles.container}>
 				<Text style={{fontSize: 32, color: '#fff'}}>Register</Text>
 				<View style={styles.formContainer}>
+
 					<Text style={styles.formText}>Full Name</Text>
 					<TextInput 
 						style={styles.formInput} 
 						placeholder="(required)"
-						onValueChange={text => {
-							this.setState({ name: text }) 
-							props.name = text;
-						}}
+						onChangeText={text => { this.setState({ name: text }) }}
 					/>
-
-					<Text style={styles.formText}>Country</Text>
-					<View style={styles.pickerContainer}>
-						<Picker
-							selectedValue={this.state.home}
-							style={{color: "#fff"}}
-							onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-						>
-							<Picker.Item label="USA" 		value="usa" />
-							<Picker.Item label="Spain" 	value="spain" />
-							<Picker.Item label="France" 	value="france" />
-							<Picker.Item label="Germany" 	value="germany" />
-						</Picker>
-					</View>
 
 					<Text style={styles.formText}>Email</Text>
 					<TextInput 
