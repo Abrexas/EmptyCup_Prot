@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
 	StyleSheet, 
 	Text, 
@@ -29,43 +29,85 @@ export default function LoginScreen(props) {
 	// INITIALIZE REDUX 
 	const dispatch = useDispatch();
 	const testPrint = useSelector(state => state.test);
+	const [user, setUser] = useState(new UserData(Math.floor(Math.random()*10), 'uName', 'uMail'));
 
 	/* STATE MACHINE */
-	//const user = firebaseApp.auth().currentUser;
 	const [regVisi, setRegVisi] = useState(false);
+
 	// USER VARIABLES
 	const [loginMail, setLoginMail] = useState(undefined);
 	const [loginName, setLoginName] = useState(undefined);
-	const [user, setUser] = useState(new UserData(Math.floor(Math.random()*10), 'uName', 'uMail'));
+	const [loginPass, setLoginPass] = useState(undefined);
+	const [regFailed, setRegFailed] = useState(false);
+	const [register, setRegister]   = useState(false);
 
-	// ______IMPLEMENT REDUX________
-	//const [user, pass] = null;
-				/*
-				firebaseApp.database().ref('users/' + user.uid).set({
-					Username: "Tohzt",
-					Country: "USA"
+	// COMPONENT DID UPDATE
+	useEffect(() => {
+		// REGISTER NEW USER
+		if (register) {
+			_registerNewUser();
+
+			// LOGIN WITH CREDENTIALS
+			if (loginMail != undefined && loginPass != undefined) { 
+				// AUTH DID UPDATE
+				firebaseApp.auth().onAuthStateChanged(function(fbUser) {
+					if (fbUser) {
+						alert("Success");
+						props.navigation.navigate({name: 'Key'});
+					}
+					else {
+						console.log("User Error Status: " + fbUser)
+						console.log("-> "+loginMail+" | "+loginPass+" <-")
+						setRegFailed(true);
+						//_toRegModal();
+					}
 				});
-				*/
+			}
+
+			// REGISTRATION HAS FAILED
+			if (regFailed) {
+				_toRegModal();
+			}
+		}
+	});	
 
 	// SET USER DATA
-	function _togModal(tog, uName, uMail) { 
+	function _togModal(tog, uName, uMail, uPass) { 
 		if (tog) {
 			if (regVisi){
-				console.log("User Info:");
-
+				// Hide Modal
 				setRegVisi(!regVisi);
 				
-				// UPDATE USER DATA
-				_updateUserData(uName, uMail)
+				// Update Local States
+				_updateUserData(uName, uMail, uPass)
 			}
 		}	
 	};
 
-	function _updateUserData(uName, uMail) {
-		console.log('Updating User Data...: '+uName+" / "+uMail)
+	// REGISTRATION ATTEMPT
+	function _registerNewUser() {
+		console.log("-----------\nLogging in with: name/pass\n"+loginMail+" / "+loginPass+"\n------------")
+		firebaseApp.auth().createUserWithEmailAndPassword(loginMail, loginPass).catch(er => alert(er));
+	};
+
+	function _updateUserData(uName, uMail, uPass) {
+		console.log('Updating User Data...: '+uName+" / "+uMail+" / "+uPass)
 
 		setLoginName(uName);
 		setLoginMail(uMail);
+		setLoginPass(uPass);
+		setRegister(true);
+	}
+
+	// OPEN REGISTRATION MODAL
+	function _toRegModal() {
+		firebaseApp.auth().signOut();
+		setLoginName(undefined);
+		setLoginMail(undefined);
+		setLoginPass(undefined);
+		setRegFailed(false);
+		setRegister(false);
+		setRegVisi(!regVisi);
 	}
 
 	return (
@@ -80,16 +122,18 @@ export default function LoginScreen(props) {
 				}}
 			>
 				<RegisterModal 
-					login={(tog, name, mail) => _togModal(tog, name, mail)}
-					name='_name_'
-					mail='_mail_'
+					login={(tog, name, mail, pass) => _togModal(tog, name, mail, pass)}
 				/>
 			</Modal>
 
 			{/** !REMOVE NAVIGATION FROM HERE! **/}
 			<View style={{height: '50%', width: '100%', alignItems: 'center', justifyContent: 'center'}}>
 				<UserIcon navigation={props.navigation}/>
-				<ShowRedux/>
+				<ShowRedux 
+					loginName={loginName}
+					loginMail={loginMail}
+					loginPass={loginPass}
+				/>
 			</View>
 
 			{/* SIGN IN CREDENTIALS */}
@@ -108,28 +152,6 @@ export default function LoginScreen(props) {
 				/>
 
 				<View style={{paddingVertical: 4}} />
-
-				{/*------------------------------
-				----------TEST-BUTTON---------*/}
-				<TouchableOpacity
-					onPress={() => {
-						console.log("ID: "+user.id);
-						console.log("Name: "+user.name+" > "+loginName);
-						console.log("Email: "+user.mail+" > "+loginMail);
-					}}
-				>
-					<View style={{
-						backgroundColor: '#348', 
-						height: 32, 
-						width: 200, 
-						borderRadius: 16, 
-						alignItems: 'center', 
-						justifyContent: 'center'
-					}}>
-						<Text style={{color: 'white'}}>TEST BUTTON</Text>
-					</View>
-				</TouchableOpacity>
-
 			</View>
 
 			<View style={styles.subContainer}>
@@ -150,8 +172,7 @@ export default function LoginScreen(props) {
 
 				<TouchableOpacity style={{alignItems: 'center'}}
 					onPress={() => {
-						firebaseApp.auth().signOut();
-						setRegVisi(!regVisi);
+						_toRegModal();
 					}} 
 				>
 					<Text style={{color: '#fff'}}>REGISTER</Text>

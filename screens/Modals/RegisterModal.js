@@ -7,39 +7,22 @@ import {
 	TouchableOpacity, 
 } from 'react-native';
 
-// FIREBASE IMPORTS
-import { firebaseApp } from '../fb/config';
-
 export default class RegisterScreen extends Component {
 
 	constructor(props) {
 		super(props);
 		// STATE MANAGEMENT
 		this.state = {
-			name: '',
-			mail: '',
-			pass: '',
-			conf: '',
+			name: 'myName',
+			mail: '4Mail@mail.ml',
+			pass: 'myPass123',
+			conf: 'myPass123',
 			hasError: false,
 		};
 	}
 
 	// LOG OUT ON LAUNCH
 	componentDidMount() {
-		firebaseApp.auth().signOut();
-	}
-
-	// CHECK FOR AUTH_STATE_CHANGE
-	componentDidUpdate() {
-		firebaseApp.auth().onAuthStateChanged(user => {
-			if (user) {
-				// SIGN-IN APPROVED
-				console.log("The shit worked!")
-				this.props.login(true, this.state.name, this.state.mail)
-			} else {
-				// No user is signed in.
-			}
-		});
 	}
 
 	// VALIDATE CREDENTIALS
@@ -99,15 +82,7 @@ export default class RegisterScreen extends Component {
 	}
 
 	signIn() {
-		// ATTEMPT LOGIN
-		firebaseApp
-			.auth()
-			.createUserWithEmailAndPassword(this.state.mail, this.state.pass)
-			.catch((error) => {
-				alert(error)
-				console.log(error)
-			}
-		);
+		this.props.login(true, this.state.name, this.state.mail, this.state.pass);	
 	}
 
 	render() {
@@ -156,7 +131,6 @@ export default class RegisterScreen extends Component {
 
 					<TouchableOpacity 
 						onPress={() => {
-							firebaseApp.auth().signOut();
 							console.log("..........")
 						}}
 					>
