@@ -22,6 +22,7 @@ import { MonoText } from '../components/StyledText';
 import SignIn from '../components/login/SignIn';
 import UserIcon from '../components/login/UserIcon';
 import RegisterModal from './Modals/RegisterModal';
+import ShowRedux from '../DEBUG/ShowRedux';
 
 export default function LoginScreen(props) {
 
@@ -88,6 +89,7 @@ export default function LoginScreen(props) {
 			{/** !REMOVE NAVIGATION FROM HERE! **/}
 			<View style={{height: '50%', width: '100%', alignItems: 'center', justifyContent: 'center'}}>
 				<UserIcon navigation={props.navigation}/>
+				<ShowRedux/>
 			</View>
 
 			{/* SIGN IN CREDENTIALS */}
