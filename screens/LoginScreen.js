@@ -38,40 +38,59 @@ export default function LoginScreen(props) {
 	const [loginMail, setLoginMail] = useState(undefined);
 	const [loginName, setLoginName] = useState(undefined);
 	const [loginPass, setLoginPass] = useState(undefined);
-	const [regFailed, setRegFailed] = useState(false);
-	const [register, setRegister]   = useState(false);
+	const [regStatus, setRegStatus] = useState(false);
 
-	// COMPONENT DID UPDATE
+	/* * * * * * * * * * * *   
+	  COMPONENT DID UPDATE
+	* * * * * * * * * * * */
+
 	useEffect(() => {
-		// REGISTER NEW USER
-		if (register) {
-			_registerNewUser();
-
-			// LOGIN WITH CREDENTIALS
-			if (loginMail != undefined && loginPass != undefined) { 
+		console.log(".. CHECKING ..")
+		// LOGIN WITH CREDENTIALS
+		if (loginMail != undefined && loginPass != undefined) { 
+			// ATTEMPT REGISTRATION
+			if (regStatus){
 				// AUTH DID UPDATE
 				firebaseApp.auth().onAuthStateChanged(function(fbUser) {
 					if (fbUser) {
-						alert("Success");
-						props.navigation.navigate({name: 'Key'});
+						// SHOULD BE SUCCESSFUL LOGIN
+						console.log("Success");
 					}
 					else {
-						console.log("User Error Status: " + fbUser)
-						console.log("-> "+loginMail+" | "+loginPass+" <-")
-						setRegFailed(true);
-						//_toRegModal();
+						// SHOULD BE FAILED LOGIN
+						console.log("Failure: "+loginMail+" / "+loginPass);
 					}
 				});
 			}
-
-			// REGISTRATION HAS FAILED
-			if (regFailed) {
-				_toRegModal();
+			else {
+				_registerNewUser();
+				setRegStatus(true);
+				console.log("Time to Try")
 			}
 		}
 	});	
 
-	// SET USER DATA
+
+	/* * * * * * * * * * * *   
+	 *	     FUNCTIONS      *
+    * * * * * * * * * * * */
+
+	// ARREMPT REGISTRATION
+	function _registerNewUser() {
+		firebaseApp.auth().createUserWithEmailAndPassword(loginMail, loginPass).catch(er => alert(er));
+	}
+
+	// OPEN REGISTRATION MODAL
+	function _toRegModal() {
+		firebaseApp.auth().signOut();
+		setLoginName(undefined);
+		setLoginMail(undefined);
+		setLoginPass(undefined);
+		setRegStatus(false);
+		setRegVisi(!regVisi);
+	}
+
+	// CLOSE MODAL AND INITIALIZE REGISTRATION
 	function _togModal(tog, uName, uMail, uPass) { 
 		if (tog) {
 			if (regVisi){
@@ -84,31 +103,17 @@ export default function LoginScreen(props) {
 		}	
 	};
 
-	// REGISTRATION ATTEMPT
-	function _registerNewUser() {
-		console.log("-----------\nLogging in with: name/pass\n"+loginMail+" / "+loginPass+"\n------------")
-		firebaseApp.auth().createUserWithEmailAndPassword(loginMail, loginPass).catch(er => alert(er));
-	};
-
+	// UPDATE USER DATA
 	function _updateUserData(uName, uMail, uPass) {
-		console.log('Updating User Data...: '+uName+" / "+uMail+" / "+uPass)
-
 		setLoginName(uName);
 		setLoginMail(uMail);
 		setLoginPass(uPass);
-		setRegister(true);
 	}
 
-	// OPEN REGISTRATION MODAL
-	function _toRegModal() {
-		firebaseApp.auth().signOut();
-		setLoginName(undefined);
-		setLoginMail(undefined);
-		setLoginPass(undefined);
-		setRegFailed(false);
-		setRegister(false);
-		setRegVisi(!regVisi);
-	}
+
+	/* * * * * * * * * * * *
+	 *    RENDER SCREEN    *
+	 * * * * * * * * * * * */ 
 
 	return (
 		<View style={styles.container}>
@@ -178,22 +183,14 @@ export default function LoginScreen(props) {
 					<Text style={{color: '#fff'}}>REGISTER</Text>
 				</TouchableOpacity>
 			</View>
-
-			{/*
-				<View style={{width: 300, flexDirection: 'row', justifyContent: 'space-around'}}>
-					<Button title='Test'   onPress={() => console.log(testPrint)} />
-					<Button 
-						title='push'
-						onPress={() => {
-							console.log('...');
-						}} 
-					/>
-					<Button title='Update' onPress={() => dispatch(testReducer())} />
-				</View>
-			*/}
 		</View>
 	);
 }
+
+
+/* * * * * * * * * * * *
+ *         STYLE       *
+ * * * * * * * * * * * */ 
 
 const styles = StyleSheet.create({
 	container: {
